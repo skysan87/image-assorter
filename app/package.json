@@ -1,0 +1,33 @@
+{
+  "name": "image-assorter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/main.js",
+  "scripts": {
+    "dev": "MODE=dev electron .",
+    "start": "electron .",
+    "build:mac": "electron-builder --mac --x64 --dir"
+  },
+  "build": {
+    "appId": "com.image-assorter.app",
+    "files": [
+      "dist",
+      "src"
+    ],
+    "directories": {
+      "output": "build",
+      "app": "."
+    },
+    "asar": true,
+    "publish": null
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^13.1.7",
+    "electron-builder": "^22.11.7",
+    "electron-devtools-installer": "^3.2.0"
+  },
+  "dependencies": {
+  }
+}
