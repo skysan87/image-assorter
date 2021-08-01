@@ -2,14 +2,14 @@
   <div class="flex flex-col h-screen">
     <div class="flex-none py-1">
       <button class="btn btn-regular" @click="openFileDialog">
-        仕分けするフォルダを設定
+        仕分けフォルダを設定
       </button>
       {{ inputFolder !== '' ? inputFolder : '(NOT SELECTED)' }}
     </div>
 
     <div class="flex-none">
       <button class="btn btn-regular w-full" @click="addFolder">
-        仕分け先のフォルダを設定 (最大9つまで)
+        出力先のフォルダを設定 (最大9つまで)
       </button>
     </div>
 
@@ -52,23 +52,39 @@ export default {
       if (result.canceled || result.filePaths.length === 0) {
         return
       }
+
+      if (this.outputFolders.includes(result.filePaths[0])) {
+        alert('出力先と重複してます!')
+        return
+      }
+
       this.inputFolder = result.filePaths[0]
     },
 
     async addFolder () {
-      // TODO: バリデーション
-
       const result = await window.electron.openFileDialog()
       if (result.canceled || result.filePaths.length === 0) {
         return
       }
 
-      if (this.outputFolders.length >= 9) {
-        alert('これ以上登録できません')
+      const path = result.filePaths[0]
+
+      if (this.outputFolders.includes(path)) {
+        alert('他の出力先と重複してます!')
         return
       }
 
-      this.outputFolders.push(...result.filePaths)
+      if (this.inputFolder === path) {
+        alert('仕分けフォルダと重複してます!')
+        return
+      }
+
+      if (this.outputFolders.length >= 9) {
+        alert('これ以上登録できません!')
+        return
+      }
+
+      this.outputFolders.push(path)
     },
 
     removePath (index) {
@@ -76,7 +92,9 @@ export default {
     },
 
     async assort () {
-      // TODO: バリデーション
+      if (!this.validate()) {
+        return
+      }
 
       const firstPath = await window.electron.setConfig({
         inputFolder: this.inputFolder,
@@ -85,13 +103,32 @@ export default {
 
       if (firstPath !== null) {
         this.$refs.dialog.open(firstPath)
+      } else {
+        alert('対象ファイルがありません!')
       }
     },
 
     async moveImages () {
+      if (!this.validate()) {
+        return
+      }
+
       // TODO: ローディング
       await window.electron.moveImages()
+
       alert('done')
+    },
+
+    validate () {
+      if (this.inputFolder === '') {
+        return false
+      }
+
+      if (this.outputFolders.length === 0) {
+        return false
+      }
+
+      return true
     }
   }
 }
