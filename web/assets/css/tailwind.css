@@ -38,20 +38,19 @@
   overflow: auto;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   transition: opacity 0.1s ease;
 }
 
 .modal-wrapper {
   display: block;
-  margin: 5vh 0 10vh;
   overflow: hidden;
 }
 
 .modal-container {
   width: 90vw;
-  max-width: 768px;
+  max-width: 600px;
   margin: 0 auto;
   overflow: hidden;
   padding: 10px 20px;
