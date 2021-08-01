@@ -5,16 +5,17 @@
         <!-- フォーカスアウト防止 -->
         <div tabindex="0" class="dummy" />
 
-        <div class="mx-2 mb-6">
+        <div class="my-2">
+          {{ imagePath }}
+        </div>
+
+        <div class="my-2">
           <img v-if="imagePath !== ''" :src="'file:///' + imagePath" alt="text">
         </div>
 
-        <div class="mx-2">
-          {{ outputFolder }}
-        </div>
-
-        <div class="flex flex-row-reverse mx-2">
-          <button ref="closeBtn" class="btn btn-outline mx-1" @click="close">
+        <div class="flex flex-row w-full">
+          <span class="flex-1">{{ outputFolder }}</span>
+          <button ref="closeBtn" class="flex-none btn btn-outline" @click="close">
             Close
           </button>
         </div>
@@ -68,11 +69,36 @@ export default {
     },
 
     async moveFile (ev) {
-      if (isNaN(ev.key)) {
-        return
+      switch (ev.key) {
+        case 'ArrowLeft':
+          await this.showNext(-1)
+          return
+        case 'ArrowRight':
+          await this.showNext(1)
+          return
+        default:
+          break
       }
 
-      const index = parseInt(ev.key)
+      if (this.isNumber(ev.key)) {
+        await this.assort(ev.key)
+      }
+    },
+
+    async showNext (offset) {
+      const nextPath = await window.electron.goToNextImage({
+        offset,
+        current: this.imagePath
+      })
+
+      if (nextPath !== null) {
+        this.imagePath = nextPath.input
+        this.outputFolder = nextPath.output
+      }
+    },
+
+    async assort (key) {
+      const index = parseInt(key)
 
       if (index <= 0 || this.maxCount < index) {
         return
@@ -86,10 +112,12 @@ export default {
       if (nextPath !== null) {
         this.imagePath = nextPath.input
         this.outputFolder = nextPath.output
-      } else {
-        alert('done')
-        this.close()
       }
+    },
+
+    isNumber (val) {
+      var pattern = /^([1-9]\d*|0)$/
+      return pattern.test(val)
     }
   }
 }

@@ -48,7 +48,14 @@ app.on('activate', () => {
   }
 })
 
-ipcMain.handle('ipc-open-file-dialog', async (ev, args) => {
+// ==============================
+//            IPC通信
+// ==============================
+
+/**
+ * フォルダ選択ダイアログを表示する
+ */
+ipcMain.handle('ipc-open-file-dialog', async (ev) => {
   const path = await dialog.showOpenDialog(win, {
     properties: ['openDirectory'],
     title: 'フォルダを選択'
@@ -56,7 +63,10 @@ ipcMain.handle('ipc-open-file-dialog', async (ev, args) => {
   return path
 })
 
-ipcMain.handle('ipc-assort-image', async (ev, args) => {
+/**
+ * 画像の出力先を仕分ける
+ */
+ipcMain.handle('ipc-assort-image', (ev, args) => {
   const outputIndex = args.outputIndex
   const filepath = args.path
 
@@ -68,6 +78,30 @@ ipcMain.handle('ipc-assort-image', async (ev, args) => {
   return (outputList.length > index + 1) ? outputList[index + 1] : null
 })
 
+/**
+ * 次の画像を表示する
+ */
+ipcMain.handle('ipc-go-to-next-image', (ev, args) => {
+  const index = outputList.findIndex(v => v.input === args.current)
+
+  const offset = args.offset
+
+  if (outputList.length === 0) {
+    return null
+  }
+
+  if (index + offset >= 0 && outputList.length > index + offset) {
+    return outputList[index + offset]
+  } else if (index + offset < 0) {
+    return outputList[outputList.length - 1]
+  } else {
+    return outputList[0]
+  }
+})
+
+/**
+ * 入出力先を設定する
+ */
 ipcMain.handle('ipc-set-config', (ev, args) => {
   inputFolder = args.inputFolder
   outputFolders = args.outputFolders
@@ -88,6 +122,9 @@ ipcMain.handle('ipc-set-config', (ev, args) => {
   return (outputList.length > 0 ) ? outputList[0] : null
 })
 
+/**
+ * ファイル移動
+ */
 ipcMain.handle('ipc-move-images', async (ev) => {
   const promisslist = []
 
@@ -97,6 +134,10 @@ ipcMain.handle('ipc-move-images', async (ev) => {
     const dist = path.join(v.output, path.basename(v.input))
 
     const p = new Promise((resolve) => {
+      if (v.output === '') {
+        resolve()
+      }
+      // NOTE: macOSでは名前が重複した場合、自動で別名をナンバリング
       fs.rename(src, dist, (error) => {
           if (error) {
             console.error({ file: path.basename(v.input), error })

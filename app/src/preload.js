@@ -4,11 +4,13 @@ const { contextBridge, ipcRenderer } = require('electron')
 // ex) window.electron.メソッド名(引数)
 contextBridge.exposeInMainWorld(
   'electron', {
-    openFileDialog: async (args) => await ipcRenderer.invoke('ipc-open-file-dialog', args),
+    openFileDialog: async () => await ipcRenderer.invoke('ipc-open-file-dialog'),
 
     setConfig: async (args) => await ipcRenderer.invoke('ipc-set-config', args),
 
     assortImage: async (args) => await ipcRenderer.invoke('ipc-assort-image', args),
+
+    goToNextImage: async (args) => await ipcRenderer.invoke('ipc-go-to-next-image', args),
 
     moveImages: async () => await ipcRenderer.invoke('ipc-move-images')
   }
