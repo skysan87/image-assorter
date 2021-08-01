@@ -27,7 +27,7 @@ async function createWindow () {
     win.webContents.openDevTools()
   } else {
     // production構成時
-    await win.loadFile(path.resolve(__dirname, '../../dist/index.html'))
+    await win.loadFile(path.resolve(__dirname, '../dist/index.html'))
   }
 
   // Emitted when the window is closed.
