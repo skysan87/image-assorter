@@ -20,6 +20,14 @@
   @apply bg-blue-700;
 }
 
+.btn-red {
+  @apply bg-red-500 text-white;
+}
+
+.btn-red:active {
+  @apply bg-red-700;
+}
+
 .btn-outline {
   @apply bg-white text-blue-700 border border-blue-500;
 }

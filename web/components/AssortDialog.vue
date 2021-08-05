@@ -15,6 +15,9 @@
 
         <div class="flex flex-row w-full">
           <span class="flex-1">{{ outputFolder }}</span>
+          <button ref="cancelBtn" class="flex-none btn btn-red mr-2" @click="cancel">
+            Cancel
+          </button>
           <button ref="closeBtn" class="flex-none btn btn-outline" @click="close">
             Close
           </button>
@@ -65,6 +68,16 @@ export default {
     checkFocus (ev) {
       if (ev.target !== null && ev.target.className === 'dummy') {
         this.$refs.closeBtn.focus()
+      }
+    },
+
+    async cancel () {
+      const result = await window.electron.cancelOutput({
+        current: this.imagePath
+      })
+
+      if (result) {
+        this.outputFolder = ''
       }
     },
 

@@ -12,6 +12,8 @@ contextBridge.exposeInMainWorld(
 
     goToNextImage: async (args) => await ipcRenderer.invoke('ipc-go-to-next-image', args),
 
-    moveImages: async () => await ipcRenderer.invoke('ipc-move-images')
+    moveImages: async () => await ipcRenderer.invoke('ipc-move-images'),
+
+    cancelOutput: async (args) => await ipcRenderer.invoke('ipc-cancel-output', args)
   }
 )
