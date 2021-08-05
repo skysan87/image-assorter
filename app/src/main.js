@@ -136,19 +136,35 @@ ipcMain.handle('ipc-move-images', async (ev) => {
     const p = new Promise((resolve) => {
       if (v.output === '') {
         resolve()
+      } else {
+        // NOTE: macOSでは名前が重複した場合、自動で別名をナンバリング
+        fs.rename(src, dist, (error) => {
+            if (error) {
+              console.error({ file: path.basename(v.input), error })
+            }
+            resolve()
+        })
       }
-      // NOTE: macOSでは名前が重複した場合、自動で別名をナンバリング
-      fs.rename(src, dist, (error) => {
-          if (error) {
-            console.error({ file: path.basename(v.input), error })
-          }
-          resolve()
-      })
     })
     promisslist.push(p)
   })
 
   await Promise.all(promisslist)
+
+  return true
+})
+
+/**
+ * 出力キャンセル
+ */
+ipcMain.handle('ipc-cancel-output', (ev, args) => {
+  const index = outputList.findIndex(v => v.input === args.current)
+
+  if (outputList.length === 0) {
+    return false
+  }
+
+  outputList[index].output = ''
 
   return true
 })
