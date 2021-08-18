@@ -4,7 +4,7 @@ const { contextBridge, ipcRenderer } = require('electron')
 // ex) window.electron.メソッド名(引数)
 contextBridge.exposeInMainWorld(
   'electron', {
-    openFileDialog: async () => await ipcRenderer.invoke('ipc-open-file-dialog'),
+    openFileDialog: async (properties) => await ipcRenderer.invoke('ipc-open-file-dialog', properties),
 
     setConfig: async (args) => await ipcRenderer.invoke('ipc-set-config', args),
 

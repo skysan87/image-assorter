@@ -55,9 +55,13 @@ app.on('activate', () => {
 /**
  * フォルダ選択ダイアログを表示する
  */
-ipcMain.handle('ipc-open-file-dialog', async (ev) => {
+ipcMain.handle('ipc-open-file-dialog', async (ev, properties) => {
+  const props = ['openDirectory']
+  if (!!properties && properties.length > 0) {
+    props.push(...properties)
+  }
   const path = await dialog.showOpenDialog(win, {
-    properties: ['openDirectory'],
+    properties: props,
     title: 'フォルダを選択'
   })
   return path

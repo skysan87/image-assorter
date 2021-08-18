@@ -1,14 +1,14 @@
 <template>
   <div class="flex flex-col h-screen">
     <div class="flex-none py-1">
-      <button class="btn btn-regular" @click="openFileDialog">
+      <button class="btn btn-regular" @click="selectInputFolder">
         仕分けフォルダを設定
       </button>
       {{ inputFolder !== '' ? inputFolder : '(NOT SELECTED)' }}
     </div>
 
     <div class="flex-none">
-      <button class="btn btn-regular w-full" @click="addFolder">
+      <button class="btn btn-regular w-full" @click="selectOutputFolder">
         出力先のフォルダを設定 (最大9つまで)
       </button>
     </div>
@@ -47,7 +47,7 @@ export default {
   }),
 
   methods: {
-    async openFileDialog () {
+    async selectInputFolder () {
       const result = await window.electron.openFileDialog()
       if (result.canceled || result.filePaths.length === 0) {
         return
@@ -61,30 +61,28 @@ export default {
       this.inputFolder = result.filePaths[0]
     },
 
-    async addFolder () {
-      const result = await window.electron.openFileDialog()
+    async selectOutputFolder () {
+      const result = await window.electron.openFileDialog(['multiSelections'])
       if (result.canceled || result.filePaths.length === 0) {
         return
       }
 
-      const path = result.filePaths[0]
-
-      if (this.outputFolders.includes(path)) {
-        alert('他の出力先と重複してます!')
-        return
-      }
-
-      if (this.inputFolder === path) {
-        alert('仕分けフォルダと重複してます!')
-        return
-      }
-
-      if (this.outputFolders.length >= 9) {
+      if ((this.outputFolders.length + result.filePaths.length) >= 9) {
         alert('これ以上登録できません!')
         return
       }
 
-      this.outputFolders.push(path)
+      for (const filepath of result.filePaths) {
+        if (this.outputFolders.includes(filepath)) {
+          continue
+        }
+
+        if (this.inputFolder === filepath) {
+          continue
+        }
+
+        this.outputFolders.push(filepath)
+      }
     },
 
     removePath (index) {
