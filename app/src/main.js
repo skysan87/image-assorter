@@ -109,7 +109,7 @@ ipcMain.handle('ipc-set-config', (ev, args) => {
 
   fs.readdirSync(inputFolder)
     .forEach(file => {
-      const ext = path.extname(file)
+      const ext = path.extname(file).toLowerCase()
       if (['.png', '.jpg', '.jpeg', '.gif'].includes(ext)) {
 
         outputList.push({
