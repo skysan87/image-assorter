@@ -10,7 +10,7 @@
         </div>
 
         <div class="my-2">
-          <img v-if="imagePath !== ''" :src="'file:///' + imagePath" alt="text">
+          <img v-if="imagePath !== ''" :src="'file:///' + imagePath" alt="text" class="img-view">
         </div>
 
         <div class="flex flex-row w-full">
@@ -135,3 +135,12 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.img-view {
+  /* max-width: 500px; */
+  width: auto;
+  max-height: 80vh;
+  margin: 0 auto;
+}
+</style>
