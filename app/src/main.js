@@ -120,6 +120,7 @@ ipcMain.handle('ipc-set-config', (ev, args) => {
  */
 ipcMain.handle('ipc-move-images', async (ev) => {
   const promisslist = []
+  const resultList = []
 
   outputList.forEach(v => {
 
@@ -132,8 +133,13 @@ ipcMain.handle('ipc-move-images', async (ev) => {
       } else {
         // NOTE: macOSでは名前が重複した場合、自動で別名をナンバリング
         fs.rename(src, dist, (error) => {
+            const filename = path.basename(src)
+            const outDir = path.dirname(dist)
+
             if (error) {
-              console.error({ file: path.basename(v.input), error })
+              resultList.push({result: 'NG', detail: error.message, in: filename, out: outDir})
+            } else {
+              resultList.push({result: 'OK', in: filename, out: outDir})
             }
             resolve()
         })
@@ -144,7 +150,7 @@ ipcMain.handle('ipc-move-images', async (ev) => {
 
   await Promise.all(promisslist)
 
-  return true
+  return resultList
 })
 
 /**
