@@ -9,8 +9,10 @@
           {{ imagePath }}
         </div>
 
-        <div class="my-2">
+        <div class="my-2 flex items-center">
+          <span v-if="hasPreview" class="inline-block text-center w-6">←</span>
           <img v-if="imagePath !== ''" :src="'file:///' + imagePath" alt="text" class="img-view">
+          <span v-if="hasNext" class="inline-block text-center w-6">→</span>
         </div>
 
         <div class="flex flex-row w-full">
@@ -46,7 +48,9 @@ export default {
     inputText: '',
     isShown: false,
     imagePath: '',
-    outputFolder: ''
+    outputFolder: '',
+    hasPreview: false,
+    hasNext: false
   }),
 
   methods: {
@@ -55,8 +59,7 @@ export default {
       document.addEventListener('focusin', this.checkFocus, false)
       document.addEventListener('keydown', this.moveFile, false)
 
-      this.imagePath = path.input
-      this.outputFolder = path.output
+      this.setFileInfo(path)
     },
 
     close () {
@@ -105,8 +108,7 @@ export default {
       })
 
       if (nextPath !== null) {
-        this.imagePath = nextPath.input
-        this.outputFolder = nextPath.output
+        this.setFileInfo(nextPath)
       }
     },
 
@@ -122,23 +124,33 @@ export default {
         path: this.imagePath
       })
 
+      if (!this.hasNext) {
+        return
+      }
+
       if (nextPath !== null) {
-        this.imagePath = nextPath.input
-        this.outputFolder = nextPath.output
+        this.setFileInfo(nextPath)
       }
     },
 
     isNumber (val) {
       var pattern = /^([1-9]\d*|0)$/
       return pattern.test(val)
+    },
+
+    setFileInfo (data) {
+      this.imagePath = data.input
+      this.outputFolder = data.output
+      this.hasNext = data.hasNext
+      this.hasPreview = data.hasPrev
     }
+
   }
 }
 </script>
 
 <style scoped>
 .img-view {
-  /* max-width: 500px; */
   width: auto;
   max-height: 80vh;
   margin: 0 auto;

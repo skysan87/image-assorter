@@ -78,8 +78,7 @@ ipcMain.handle('ipc-assort-image', (ev, args) => {
 
   outputList[index].output = outputFolders[outputIndex]
 
-  // 次のパス
-  return (outputList.length > index + 1) ? outputList[index + 1] : null
+  return getFileInfo(index, 1)
 })
 
 /**
@@ -90,17 +89,7 @@ ipcMain.handle('ipc-go-to-next-image', (ev, args) => {
 
   const offset = args.offset
 
-  if (outputList.length === 0) {
-    return null
-  }
-
-  if (index + offset >= 0 && outputList.length > index + offset) {
-    return outputList[index + offset]
-  } else if (index + offset < 0) {
-    return outputList[outputList.length - 1]
-  } else {
-    return outputList[0]
-  }
+  return getFileInfo(index, offset)
 })
 
 /**
@@ -123,7 +112,7 @@ ipcMain.handle('ipc-set-config', (ev, args) => {
       }
     })
 
-  return (outputList.length > 0 ) ? outputList[0] : null
+  return getFileInfo(0)
 })
 
 /**
@@ -172,3 +161,31 @@ ipcMain.handle('ipc-cancel-output', (ev, args) => {
 
   return true
 })
+
+/**
+ * 表示する画像のファイルパスと前後のファイルがあるかを計算する
+ * @param {Number} currentIndex 表示しているファイルIndex
+ * @param {Number} offset 表示しているファイルIndexからの差
+ * @returns {Object} {input, output, hasNext, hasPrev}
+ */
+const getFileInfo = (currentIndex, offset=0) => {
+  if (outputList.length == 0) {
+    return null
+  }
+
+  const totalSize = outputList.length
+  const actualOffset = offset % totalSize
+
+  let nextIndex
+  if (actualOffset >= 0 ) {
+    nextIndex = (currentIndex + actualOffset) % totalSize
+  } else if (actualOffset < 0) {
+    nextIndex = (currentIndex + (totalSize - actualOffset)) % totalSize
+  }
+
+  return {
+    ...outputList[nextIndex]
+    , hasNext: nextIndex + 1 < totalSize
+    , hasPrev: nextIndex - 1 >= 0
+  }
+}
