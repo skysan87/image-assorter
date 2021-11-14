@@ -5,18 +5,33 @@
         <!-- フォーカスアウト防止 -->
         <div tabindex="0" class="dummy" />
 
-        <div class="my-2">
+        <div class="">
           {{ imagePath }}
         </div>
 
-        <div class="my-2 flex items-center">
+        <div class="">
+          <span class="text-xl font-bold mr-2">→</span>{{ outputFolder }}
+        </div>
+
+        <div class="mt-1 flex items-center">
           <span v-if="hasPreview" class="inline-block text-center w-6">←</span>
           <img v-if="imagePath !== ''" :src="'file:///' + imagePath" alt="text" class="img-view">
           <span v-if="hasNext" class="inline-block text-center w-6">→</span>
         </div>
 
-        <div class="flex flex-row w-full">
-          <span class="flex-1">{{ outputFolder }}</span>
+        <div class="mt-1 flex flex-row w-full">
+          <div class="flex-1 flex items-center">
+            <span class="mr-1">番号で出力先を選択:</span>
+            <div
+              v-for="(path, index) in folderList"
+              :key="index"
+              :title="path"
+              class="number-box mr-1"
+              tabindex="-1"
+            >
+              <span>{{ index + 1 }}</span>
+            </div>
+          </div>
           <button ref="cancelBtn" class="flex-none btn btn-outline__red mr-2" @click="cancel">
             Cancel
           </button>
@@ -37,10 +52,10 @@ export default {
   name: 'AssortDialog',
 
   props: {
-    maxCount: {
-      type: Number,
+    folderList: {
+      type: Array,
       require: true,
-      default: 0
+      default: () => []
     }
   },
 
@@ -124,7 +139,7 @@ export default {
     async assort (key) {
       const index = parseInt(key)
 
-      if (index <= 0 || this.maxCount < index) {
+      if (index <= 0 || this.folderList.length < index) {
         return
       }
 
@@ -134,6 +149,7 @@ export default {
       })
 
       if (!this.hasNext) {
+        this.outputFolder = this.folderList[index - 1]
         return
       }
 
@@ -161,7 +177,12 @@ export default {
 <style scoped>
 .img-view {
   width: auto;
-  max-height: 80vh;
+  max-height: 75vh;
   margin: 0 auto;
+}
+
+.number-box {
+  @apply py-1 px-2 text-sm;
+  @apply bg-yellow-500 text-white;
 }
 </style>
