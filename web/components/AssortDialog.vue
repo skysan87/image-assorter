@@ -17,7 +17,7 @@
 
         <div class="flex flex-row w-full">
           <span class="flex-1">{{ outputFolder }}</span>
-          <button ref="cancelBtn" class="flex-none btn btn-red mr-2" @click="cancel">
+          <button ref="cancelBtn" class="flex-none btn btn-outline__red mr-2" @click="cancel">
             Cancel
           </button>
           <button ref="closeBtn" class="flex-none btn btn-outline" @click="close">
@@ -60,6 +60,15 @@ export default {
       document.addEventListener('keydown', this.moveFile, false)
 
       this.setFileInfo(path)
+
+      this.$nextTick(() => {
+        if (this.$el) {
+          this.$el.focus()
+        }
+        if (this.$refs.closeBtn) {
+          this.$refs.closeBtn.focus()
+        }
+      })
     },
 
     close () {
