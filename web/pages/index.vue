@@ -16,7 +16,9 @@
     <div class="flex-1 overflow-y-scroll">
       <div v-for="(path, index) in outputFolders" :key="index" class="flex w-full pt-1 px-1">
         <span class="flex-1">{{ index + 1 }}. {{ path }}</span>
-        <button class="flex-none btn btn-outline" @click="removePath(index)">削除</button>
+        <button class="flex-none btn btn-outline" @click="removePath(index)">
+          削除
+        </button>
       </div>
     </div>
     <div class="flex-none">
@@ -113,7 +115,8 @@ export default {
       }
 
       // TODO: ローディング
-      await window.electron.moveImages()
+      const result = await window.electron.moveImages()
+      console.table(result)
 
       alert('done')
     },
