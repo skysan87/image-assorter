@@ -13,10 +13,14 @@
           <span class="text-xl font-bold mr-2">→</span>{{ outputFolder }}
         </div>
 
-        <div class="mt-1 flex items-center">
-          <span v-if="hasPreview" class="inline-block text-center w-6">←</span>
+        <div class="mt-1 relative">
+          <div v-if="hasPreview" class="absolute inset-y-0 left-0 top-1/2">
+            <span class="arrow-text">←</span>
+          </div>
           <img v-if="imagePath !== ''" :src="'file:///' + imagePath" alt="text" class="img-view">
-          <span v-if="hasNext" class="inline-block text-center w-6">→</span>
+          <div v-if="hasNext" class="absolute inset-y-0 right-0 top-1/2">
+            <span class="arrow-text">→</span>
+          </div>
         </div>
 
         <div class="mt-1 flex flex-row w-full">
@@ -184,5 +188,10 @@ export default {
 .number-box {
   @apply py-1 px-2 text-sm;
   @apply bg-yellow-500 text-white;
+}
+
+.arrow-text {
+  @apply text-2xl;
+  background-color: rgba(255, 255, 255, 0.5);
 }
 </style>
