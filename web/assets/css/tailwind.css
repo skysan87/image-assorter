@@ -24,7 +24,7 @@
   @apply bg-red-500 text-white;
 }
 
-.btn-red:active {
+.btn-red:active, .btn-red:focus {
   @apply bg-red-700;
 }
 
@@ -32,8 +32,16 @@
   @apply bg-white text-blue-700 border border-blue-500;
 }
 
-.btn-outline:active {
+.btn-outline:active, .btn-outline:focus {
   @apply bg-blue-500 text-white border-transparent;
+}
+
+.btn-outline__red {
+  @apply bg-white text-red-700 border border-red-500;
+}
+
+.btn-outline__red:active, .btn-outline__red:focus {
+  @apply bg-red-500 text-white border-transparent;
 }
 
 .modal-mask {

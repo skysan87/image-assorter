@@ -5,17 +5,34 @@
         <!-- フォーカスアウト防止 -->
         <div tabindex="0" class="dummy" />
 
-        <div class="my-2">
+        <div class="">
           {{ imagePath }}
         </div>
 
-        <div class="my-2">
-          <img v-if="imagePath !== ''" :src="'file:///' + imagePath" alt="text" class="img-view">
+        <div class="">
+          <span class="text-xl font-bold mr-2">→</span>{{ outputFolder }}
         </div>
 
-        <div class="flex flex-row w-full">
-          <span class="flex-1">{{ outputFolder }}</span>
-          <button ref="cancelBtn" class="flex-none btn btn-red mr-2" @click="cancel">
+        <div class="mt-1 flex items-center">
+          <span v-if="hasPreview" class="inline-block text-center w-6">←</span>
+          <img v-if="imagePath !== ''" :src="'file:///' + imagePath" alt="text" class="img-view">
+          <span v-if="hasNext" class="inline-block text-center w-6">→</span>
+        </div>
+
+        <div class="mt-1 flex flex-row w-full">
+          <div class="flex-1 flex items-center">
+            <span class="mr-1">番号で出力先を選択:</span>
+            <div
+              v-for="(path, index) in folderList"
+              :key="index"
+              :title="path"
+              class="number-box mr-1"
+              tabindex="-1"
+            >
+              <span>{{ index + 1 }}</span>
+            </div>
+          </div>
+          <button ref="cancelBtn" class="flex-none btn btn-outline__red mr-2" @click="cancel">
             Cancel
           </button>
           <button ref="closeBtn" class="flex-none btn btn-outline" @click="close">
@@ -35,10 +52,10 @@ export default {
   name: 'AssortDialog',
 
   props: {
-    maxCount: {
-      type: Number,
+    folderList: {
+      type: Array,
       require: true,
-      default: 0
+      default: () => []
     }
   },
 
@@ -46,7 +63,9 @@ export default {
     inputText: '',
     isShown: false,
     imagePath: '',
-    outputFolder: ''
+    outputFolder: '',
+    hasPreview: false,
+    hasNext: false
   }),
 
   methods: {
@@ -55,8 +74,16 @@ export default {
       document.addEventListener('focusin', this.checkFocus, false)
       document.addEventListener('keydown', this.moveFile, false)
 
-      this.imagePath = path.input
-      this.outputFolder = path.output
+      this.setFileInfo(path)
+
+      this.$nextTick(() => {
+        if (this.$el) {
+          this.$el.focus()
+        }
+        if (this.$refs.closeBtn) {
+          this.$refs.closeBtn.focus()
+        }
+      })
     },
 
     close () {
@@ -105,15 +132,14 @@ export default {
       })
 
       if (nextPath !== null) {
-        this.imagePath = nextPath.input
-        this.outputFolder = nextPath.output
+        this.setFileInfo(nextPath)
       }
     },
 
     async assort (key) {
       const index = parseInt(key)
 
-      if (index <= 0 || this.maxCount < index) {
+      if (index <= 0 || this.folderList.length < index) {
         return
       }
 
@@ -122,25 +148,41 @@ export default {
         path: this.imagePath
       })
 
+      if (!this.hasNext) {
+        this.outputFolder = this.folderList[index - 1]
+        return
+      }
+
       if (nextPath !== null) {
-        this.imagePath = nextPath.input
-        this.outputFolder = nextPath.output
+        this.setFileInfo(nextPath)
       }
     },
 
     isNumber (val) {
       var pattern = /^([1-9]\d*|0)$/
       return pattern.test(val)
+    },
+
+    setFileInfo (data) {
+      this.imagePath = data.input
+      this.outputFolder = data.output
+      this.hasNext = data.hasNext
+      this.hasPreview = data.hasPrev
     }
+
   }
 }
 </script>
 
 <style scoped>
 .img-view {
-  /* max-width: 500px; */
   width: auto;
-  max-height: 80vh;
+  max-height: 75vh;
   margin: 0 auto;
+}
+
+.number-box {
+  @apply py-1 px-2 text-sm;
+  @apply bg-yellow-500 text-white;
 }
 </style>

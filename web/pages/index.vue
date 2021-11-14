@@ -29,7 +29,7 @@
         !!! 仕分け実行 !!!
       </button>
     </div>
-    <assort-dialog ref="dialog" :max-count="outputFolders.length" />
+    <assort-dialog ref="dialog" :folder-list="outputFolders" />
   </div>
 </template>
 
