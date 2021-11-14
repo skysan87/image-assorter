@@ -107,6 +107,7 @@ ipcMain.handle('ipc-go-to-next-image', (ev, args) => {
  * 入出力先を設定する
  */
 ipcMain.handle('ipc-set-config', (ev, args) => {
+  const medid = args.media
   inputFolder = args.inputFolder
   outputFolders = args.outputFolders
   outputList = []
@@ -114,8 +115,7 @@ ipcMain.handle('ipc-set-config', (ev, args) => {
   fs.readdirSync(inputFolder)
     .forEach(file => {
       const ext = path.extname(file).toLowerCase()
-      if (['.png', '.jpg', '.jpeg', '.gif'].includes(ext)) {
-
+      if (medid.includes(ext)) {
         outputList.push({
           input: path.join(inputFolder ,file),
           output: ''

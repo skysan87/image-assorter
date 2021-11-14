@@ -3,6 +3,10 @@ const developConfig = {
 
   target: 'static',
 
+  env: {
+    media: ['.png', '.jpg', '.jpeg', '.gif', '.webp']
+  },
+
   head: {
     title: 'image-assorter',
     htmlAttrs: {

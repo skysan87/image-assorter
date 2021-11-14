@@ -95,6 +95,7 @@ export default {
       }
 
       const firstPath = await window.electron.setConfig({
+        media: process.env.media,
         inputFolder: this.inputFolder,
         outputFolders: this.outputFolders
       })
