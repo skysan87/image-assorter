@@ -186,7 +186,7 @@ const getFileInfo = (currentIndex, offset=0) => {
   if (actualOffset >= 0 ) {
     nextIndex = (currentIndex + actualOffset) % totalSize
   } else if (actualOffset < 0) {
-    nextIndex = (currentIndex + (totalSize - actualOffset)) % totalSize
+    nextIndex = (currentIndex + (totalSize + actualOffset)) % totalSize
   }
 
   return {
