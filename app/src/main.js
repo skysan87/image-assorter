@@ -98,11 +98,16 @@ ipcMain.handle('ipc-go-to-next-image', (ev, args) => {
 ipcMain.handle('ipc-set-config', (ev, args) => {
   const medid = args.media
   inputFolder = args.inputFolder
-  // TODO: 出力フォルダの存在チェック
-  outputFolders = args.outputFolders
   outputList = []
 
   try {
+    args.outputFolders.forEach(folder => {
+      if (!fs.existsSync(folder)) {
+        throw new Error(`${folder}は存在しません`)
+      }
+    })
+    outputFolders = args.outputFolders
+
     fs.readdirSync(inputFolder)
       .forEach(file => {
         const ext = path.extname(file).toLowerCase()
