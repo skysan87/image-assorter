@@ -36,6 +36,7 @@
 </template>
 
 <script>
+import Storage from '@/util/storage'
 import AssortDialog from '@/components/AssortDialog'
 
 export default {
@@ -47,6 +48,10 @@ export default {
     inputFolder: '',
     outputFolders: []
   }),
+
+  mounted () {
+    this.fetchConfig()
+  },
 
   methods: {
     async selectInputFolder () {
@@ -61,6 +66,8 @@ export default {
       }
 
       this.inputFolder = result.filePaths[0]
+
+      this.saveConfig()
     },
 
     async selectOutputFolder () {
@@ -85,10 +92,13 @@ export default {
 
         this.outputFolders.push(filepath)
       }
+
+      this.saveConfig()
     },
 
     removePath (index) {
       this.outputFolders.splice(index, 1)
+      this.saveConfig()
     },
 
     async assort () {
@@ -96,16 +106,16 @@ export default {
         return
       }
 
-      const firstPath = await window.electron.setConfig({
+      const result = await window.electron.setConfig({
         media: process.env.media,
         inputFolder: this.inputFolder,
         outputFolders: this.outputFolders
       })
 
-      if (firstPath !== null) {
-        this.$refs.dialog.open(firstPath)
+      if (result.status) {
+        this.$refs.dialog.open(result.data)
       } else {
-        alert('対象ファイルがありません!')
+        alert(result.data)
       }
     },
 
@@ -131,6 +141,19 @@ export default {
       }
 
       return true
+    },
+
+    saveConfig () {
+      Storage.save({
+        input_folder: this.inputFolder,
+        output_folders: this.outputFolders
+      })
+    },
+
+    fetchConfig () {
+      const data = Storage.fetch()
+      this.inputFolder = data.input_folder || ''
+      this.outputFolders = data.output_folders || []
     }
   }
 }

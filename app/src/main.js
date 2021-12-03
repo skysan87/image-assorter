@@ -98,21 +98,32 @@ ipcMain.handle('ipc-go-to-next-image', (ev, args) => {
 ipcMain.handle('ipc-set-config', (ev, args) => {
   const medid = args.media
   inputFolder = args.inputFolder
+  // TODO: 出力フォルダの存在チェック
   outputFolders = args.outputFolders
   outputList = []
 
-  fs.readdirSync(inputFolder)
-    .forEach(file => {
-      const ext = path.extname(file).toLowerCase()
-      if (medid.includes(ext)) {
-        outputList.push({
-          input: path.join(inputFolder ,file),
-          output: ''
-        })
-      }
-    })
+  try {
+    fs.readdirSync(inputFolder)
+      .forEach(file => {
+        const ext = path.extname(file).toLowerCase()
+        if (medid.includes(ext)) {
+          outputList.push({
+            input: path.join(inputFolder ,file),
+            output: ''
+          })
+        }
+      })
+  } catch (error) {
+    return {
+      status: false,
+      data: error.message
+    }
+  }
 
-  return getFileInfo(0)
+  return {
+    status: true,
+    data: getFileInfo(0)
+  }
 })
 
 /**
