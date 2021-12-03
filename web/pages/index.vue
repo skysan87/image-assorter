@@ -126,6 +126,7 @@ export default {
 
       // TODO: ローディング
       const result = await window.electron.moveImages()
+      // TODO: NG結果の処理
       console.table(result)
 
       alert('done')
