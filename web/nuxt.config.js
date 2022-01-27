@@ -36,9 +36,14 @@ const developConfig = {
   ],
 
   modules: [
+    '@nuxtjs/toast'
   ],
 
   build: {
+  },
+
+  toast: {
+    position: 'top-right'
   }
 }
 

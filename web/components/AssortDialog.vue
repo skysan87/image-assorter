@@ -138,6 +138,13 @@ export default {
       if (nextPath !== null) {
         this.setFileInfo(nextPath)
       }
+
+      if (!this.hasNext) {
+        this.$toast.show('最後のファイルです', {
+          duration: 2000,
+          type: 'info'
+        })
+      }
     },
 
     async assort (key) {
