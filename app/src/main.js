@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog } = require('electron')
+const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron')
 const path = require('path')
 const fs = require('fs')
 
@@ -52,6 +52,8 @@ app.on('activate', () => {
 //            IPC通信
 // ==============================
 
+const DELETE_INDEX = '[Trash]'
+
 /**
  * フォルダ選択ダイアログを表示する
  */
@@ -77,6 +79,19 @@ ipcMain.handle('ipc-assort-image', (ev, args) => {
   const index = outputList.findIndex(v => v.input === filepath)
 
   outputList[index].output = outputFolders[outputIndex]
+
+  return getFileInfo(index, 1)
+})
+
+/**
+ * 画像の仕分け先をゴミ箱に設定する
+ */
+ipcMain.handle('ipc-trash-image', (ev, args) => {
+  const filepath = args.path
+
+  const index = outputList.findIndex(v => v.input === filepath)
+
+  outputList[index].output = DELETE_INDEX
 
   return getFileInfo(index, 1)
 })
@@ -143,25 +158,28 @@ ipcMain.handle('ipc-move-images', async (ev) => {
     const src = v.input
     const dist = path.join(v.output, path.basename(v.input))
 
-    const p = new Promise((resolve) => {
-      if (v.output === '') {
-        resolve()
-      } else {
+    if (v.output === '') {
+      // DO NOTHING
+    } else if (v.output === DELETE_INDEX) {
+      // ゴミ箱に移動
+      promisslist.push(shell.trashItem(src))
+    } else {
+      const p = new Promise((resolve) => {
         // NOTE: macOSでは名前が重複した場合、自動で別名をナンバリング
         fs.rename(src, dist, (error) => {
-            const filename = path.basename(src)
-            const outDir = path.dirname(dist)
+          const filename = path.basename(src)
+          const outDir = path.dirname(dist)
 
-            if (error) {
-              resultList.push({result: 'NG', detail: error.message, in: filename, out: outDir})
-            } else {
-              resultList.push({result: 'OK', in: filename, out: outDir})
-            }
-            resolve()
+          if (error) {
+            resultList.push({result: 'NG', detail: error.message, in: filename, out: outDir})
+          } else {
+            resultList.push({result: 'OK', in: filename, out: outDir})
+          }
+          resolve()
         })
-      }
-    })
-    promisslist.push(p)
+      })
+      promisslist.push(p)
+    }
   })
 
   await Promise.all(promisslist)
