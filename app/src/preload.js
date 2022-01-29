@@ -10,6 +10,8 @@ contextBridge.exposeInMainWorld(
 
     assortImage: async (args) => await ipcRenderer.invoke('ipc-assort-image', args),
 
+    trashImage: async (args) => await ipcRenderer.invoke('ipc-trash-image', args),
+
     goToNextImage: async (args) => await ipcRenderer.invoke('ipc-go-to-next-image', args),
 
     moveImages: async () => await ipcRenderer.invoke('ipc-move-images'),

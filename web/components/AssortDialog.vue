@@ -26,11 +26,14 @@
         <div class="mt-1 flex flex-row w-full">
           <div class="flex-1 flex items-center">
             <span class="mr-1">番号で出力先を選択:</span>
+            <div class="number-box mr-1 bg-red-500 text-white" tabindex="-1">
+              D
+            </div>
             <div
               v-for="(path, index) in folderList"
               :key="index"
               :title="path"
-              class="number-box mr-1"
+              class="number-box mr-1 bg-yellow-500 text-white"
               tabindex="-1"
             >
               <span>{{ index + 1 }}</span>
@@ -113,19 +116,23 @@ export default {
     },
 
     async moveFile (ev) {
-      switch (ev.key) {
-        case 'ArrowLeft':
-          await this.showNext(-1)
-          return
-        case 'ArrowRight':
-          await this.showNext(1)
-          return
-        default:
-          break
+      if (ev.key === 'ArrowLeft') {
+        await this.showNext(-1)
+      } else if (ev.key === 'ArrowRight') {
+        await this.showNext(1)
+      } else if (ev.key === 'd') {
+        await this.trashImage()
+      } else if (this.isNumber(ev.key)) {
+        await this.assort(ev.key)
+      } else {
+        return
       }
 
-      if (this.isNumber(ev.key)) {
-        await this.assort(ev.key)
+      if (!this.hasNext) {
+        this.$toast.show('最後のファイルです', {
+          duration: 2000,
+          type: 'info'
+        })
       }
     },
 
@@ -137,13 +144,6 @@ export default {
 
       if (nextPath !== null) {
         this.setFileInfo(nextPath)
-      }
-
-      if (!this.hasNext) {
-        this.$toast.show('最後のファイルです', {
-          duration: 2000,
-          type: 'info'
-        })
       }
     },
 
@@ -161,6 +161,21 @@ export default {
 
       if (!this.hasNext) {
         this.outputFolder = this.folderList[index - 1]
+        return
+      }
+
+      if (nextPath !== null) {
+        this.setFileInfo(nextPath)
+      }
+    },
+
+    async trashImage () {
+      const nextPath = await window.electron.trashImage({
+        path: this.imagePath
+      })
+
+      if (!this.hasNext) {
+        this.outputFolder = '[Trash]'
         return
       }
 
@@ -194,7 +209,6 @@ export default {
 
 .number-box {
   @apply py-1 px-2 text-sm;
-  @apply bg-yellow-500 text-white;
 }
 
 .arrow-text {
