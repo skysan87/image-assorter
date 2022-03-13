@@ -106,6 +106,12 @@ export default {
         return
       }
 
+      if (await window.electron.isAssorted()) {
+        if (!confirm('仕分け先指定を再度設定しますか？')) {
+          return
+        }
+      }
+
       const result = await window.electron.setConfig({
         media: process.env.media,
         inputFolder: this.inputFolder,
