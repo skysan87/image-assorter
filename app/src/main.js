@@ -110,8 +110,8 @@ ipcMain.handle('ipc-go-to-next-image', (ev, args) => {
 /**
  * すでに仕分け先を設定済みか
  */
-ipcMain.handle('ipc-is-output-list-empty', () => {
-  return outputList.length > 0
+ipcMain.handle('ipc-is-assorted', () => {
+  return outputList.some(o => o.output !== '')
 })
 
 /**

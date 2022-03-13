@@ -6,7 +6,7 @@ contextBridge.exposeInMainWorld(
   'electron', {
     openFileDialog: async (properties) => await ipcRenderer.invoke('ipc-open-file-dialog', properties),
 
-    isOutputListEmpty: async () => await ipcRenderer.invoke('ipc-is-output-list-empty'),
+    isAssorted: async () => await ipcRenderer.invoke('ipc-is-assorted'),
 
     setConfig: async (args) => await ipcRenderer.invoke('ipc-set-config', args),
 

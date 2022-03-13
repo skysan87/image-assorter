@@ -106,7 +106,7 @@ export default {
         return
       }
 
-      if (await window.electron.isOutputListEmpty() === false) {
+      if (await window.electron.isAssorted()) {
         if (!confirm('仕分け先指定を再度設定しますか？')) {
           return
         }
