@@ -17,6 +17,7 @@ module.exports = {
     'dot-notation': 'off',
     'no-console': 'off',
     'no-var': 'off',
-    'no-useless-return': 'off'
+    'no-useless-return': 'off',
+    'vue/multi-word-component-names': 'off'
   }
 }
