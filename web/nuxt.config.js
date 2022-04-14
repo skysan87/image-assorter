@@ -4,7 +4,8 @@ const developConfig = {
   target: 'static',
 
   env: {
-    media: ['.png', '.jpg', '.jpeg', '.gif', '.webp']
+    image: ['.png', '.jpg', '.jpeg', '.gif', '.webp'],
+    movie: ['.mp4']
   },
 
   head: {

@@ -112,8 +112,11 @@ export default {
         }
       }
 
+      const IMAGE_EXT = process.env.image
+      const MOVIE_EXT = process.env.movie
+
       const result = await window.electron.setConfig({
-        media: process.env.media,
+        media: [...IMAGE_EXT, ...MOVIE_EXT],
         inputFolder: this.inputFolder,
         outputFolders: this.outputFolders
       })
