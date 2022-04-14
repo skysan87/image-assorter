@@ -17,10 +17,29 @@
           <div v-if="hasPreview" class="absolute inset-y-0 left-0 top-1/2">
             <span class="arrow-text">←</span>
           </div>
-          <img v-if="imagePath !== ''" :src="'file:///' + imagePath" alt="text" class="img-view">
+
+          <img v-if="mediaType === MEDIA_TYPE.IMAGE" :src="'file:///' + imagePath" alt="text" class="img-view">
+          <video
+            v-if="mediaType === MEDIA_TYPE.MOVIE"
+            class="img-view"
+            :src="'file:///' + imagePath"
+            :controls="moviePlayable"
+            muted
+            controlslist="nofullscreen"
+            disablePictureInPicture
+            disableRemotePlayback
+          />
+
           <div v-if="hasNext" class="absolute inset-y-0 right-0 top-1/2">
             <span class="arrow-text">→</span>
           </div>
+        </div>
+
+        <div class="mt-1 w-full text-center">
+          <label>
+            <input v-model="moviePlayable" type="checkbox">
+            <span>動画を再生する</span>
+          </label>
         </div>
 
         <div class="mt-1 flex flex-row w-full">
@@ -55,6 +74,10 @@
 </template>
 
 <script>
+
+const IMAGE_EXT = process.env.image
+const MOVIE_EXT = process.env.movie
+
 export default {
   name: 'AssortDialog',
 
@@ -72,7 +95,10 @@ export default {
     imagePath: '',
     outputFolder: '',
     hasPreview: false,
-    hasNext: false
+    hasNext: false,
+    mediaType: null,
+    MEDIA_TYPE: { IMAGE: 0, MOVIE: 1 },
+    moviePlayable: false
   }),
 
   methods: {
@@ -194,8 +220,24 @@ export default {
       this.outputFolder = data.output
       this.hasNext = data.hasNext
       this.hasPreview = data.hasPrev
-    }
+      this.mediaType = this.checkMediaType(data.input)
+    },
 
+    checkMediaType (filepath) {
+      if (filepath === '') {
+        return ''
+      }
+
+      const extension = filepath.substring(filepath.lastIndexOf('.'))
+
+      if (IMAGE_EXT.includes(extension)) {
+        return this.MEDIA_TYPE.IMAGE
+      } else if (MOVIE_EXT.includes(extension)) {
+        return this.MEDIA_TYPE.MOVIE
+      } else {
+        return ''
+      }
+    }
   }
 }
 </script>
