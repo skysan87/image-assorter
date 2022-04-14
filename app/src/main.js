@@ -147,9 +147,16 @@ ipcMain.handle('ipc-set-config', (ev, args) => {
     }
   }
 
-  return {
-    status: true,
-    data: getFileInfo(0)
+  if (outputList.length > 0) {
+    return {
+      status: true,
+      data: getFileInfo(0)
+    }
+  } else {
+    return {
+      status: false,
+      data: '対象のファイルが存在しません'
+    }
   }
 })
 
