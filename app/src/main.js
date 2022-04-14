@@ -118,7 +118,7 @@ ipcMain.handle('ipc-is-assorted', () => {
  * 入出力先を設定する
  */
 ipcMain.handle('ipc-set-config', (ev, args) => {
-  const medid = args.media
+  const media = args.media
   inputFolder = args.inputFolder
   outputList = []
 
@@ -133,7 +133,7 @@ ipcMain.handle('ipc-set-config', (ev, args) => {
     fs.readdirSync(inputFolder)
       .forEach(file => {
         const ext = path.extname(file).toLowerCase()
-        if (medid.includes(ext)) {
+        if (media.includes(ext)) {
           outputList.push({
             input: path.join(inputFolder ,file),
             output: ''
