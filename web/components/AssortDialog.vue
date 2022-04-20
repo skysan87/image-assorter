@@ -142,6 +142,8 @@ export default {
     },
 
     async moveFile (ev) {
+      this.$toast.clear()
+
       if (ev.key === 'ArrowLeft') {
         await this.showNext(-1)
       } else if (ev.key === 'ArrowRight') {
@@ -156,7 +158,6 @@ export default {
 
       if (!this.hasNext) {
         this.$toast.show('最後のファイルです', {
-          duration: 2000,
           type: 'info'
         })
       }
