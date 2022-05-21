@@ -229,7 +229,7 @@ export default {
         return ''
       }
 
-      const extension = filepath.substring(filepath.lastIndexOf('.'))
+      const extension = filepath.substring(filepath.lastIndexOf('.')).toLowerCase()
 
       if (IMAGE_EXT.includes(extension)) {
         return this.MEDIA_TYPE.IMAGE
