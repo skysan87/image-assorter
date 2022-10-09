@@ -14,7 +14,7 @@
         </div>
 
         <div class="mt-1 relative">
-          <div v-if="hasPreview" class="absolute inset-y-0 left-0 top-1/2">
+          <div v-if="hasPreview" class="absolute inset-y-0 left-0 top-1/2 cursor-pointer" @click="showNext(-1)">
             <span class="arrow-text">←</span>
           </div>
 
@@ -30,7 +30,7 @@
             disableRemotePlayback
           />
 
-          <div v-if="hasNext" class="absolute inset-y-0 right-0 top-1/2">
+          <div v-if="hasNext" class="absolute inset-y-0 right-0 top-1/2 cursor-pointer" @click="showNext(1)">
             <span class="arrow-text">→</span>
           </div>
         </div>
@@ -45,18 +45,19 @@
         <div class="mt-1 flex flex-row w-full">
           <div class="flex-1 flex items-center">
             <span class="mr-1">番号で出力先を選択:</span>
-            <div class="number-box mr-1 bg-red-500 text-white" tabindex="-1">
+            <button class="block number-box mr-1 bg-red-500 text-white" title="ゴミ箱" tabindex="-1" @click="trashImage">
               D
-            </div>
-            <div
+            </button>
+            <button
               v-for="(path, index) in folderList"
               :key="index"
               :title="path"
-              class="number-box mr-1 bg-yellow-500 text-white"
+              class="block number-box mr-1 bg-yellow-500 text-white"
               tabindex="-1"
+              @click="assort(index + 1)"
             >
-              <span>{{ index + 1 }}</span>
-            </div>
+              {{ index + 1 }}
+            </button>
           </div>
           <button ref="cancelBtn" class="flex-none btn btn-outline__red mr-2" @click="cancel">
             Cancel
@@ -154,12 +155,6 @@ export default {
         await this.assort(ev.key)
       } else {
         return
-      }
-
-      if (!this.hasNext) {
-        this.$toast.show('最後のファイルです', {
-          type: 'info'
-        })
       }
     },
 
