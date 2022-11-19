@@ -270,9 +270,7 @@ const getNextIndex = (dir) => {
     .map(({ name }) => {
       // 1文字以上の連続した数字
       const index = name.match(/\d+/)
-      // console.log(index)
       return index ? parseInt(index[0]) : 0
     })
-  // console.log(list)
-  return Math.max(...list) + 1
+  return list.length > 0 ? Math.max(...list) + 1 : 1
 }
