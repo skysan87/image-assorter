@@ -18,6 +18,8 @@ contextBridge.exposeInMainWorld(
 
     moveImages: async () => await ipcRenderer.invoke('ipc-move-images'),
 
-    cancelOutput: async (args) => await ipcRenderer.invoke('ipc-cancel-output', args)
+    cancelOutput: async (args) => await ipcRenderer.invoke('ipc-cancel-output', args),
+
+    numberFile: async (args) => await ipcRenderer.invoke('ipc-number-file', args)
   }
 )
