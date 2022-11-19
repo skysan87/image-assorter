@@ -216,6 +216,21 @@ ipcMain.handle('ipc-cancel-output', (ev, args) => {
   return true
 })
 
+ipcMain.handle('ipc-number-file', async (_, { file, dir }) => {
+  return new Promise((resolve, reject) => {
+    const srcExt = path.extname(file)
+    const dist = path.join(dir, `${getNextIndex(dir)}${srcExt}`)
+    // NOTE: macOSでは名前が重複した場合、自動で別名をナンバリング
+    fs.rename(file, dist, (error) => {
+      if (error) {
+        reject(error)
+      } else {
+        resolve()
+      }
+    })
+  })
+})
+
 /**
  * 表示する画像のファイルパスと前後のファイルがあるかを計算する
  * @param {Number} currentIndex 表示しているファイルIndex
@@ -242,4 +257,22 @@ const getFileInfo = (currentIndex, offset=0) => {
     , hasNext: nextIndex + 1 < totalSize
     , hasPrev: nextIndex - 1 >= 0
   }
+}
+
+/**
+ * 追加されたファイルを自動採番する(同フォルダ内で最大値)
+ * @param {String} dir
+ * @returns {Number}
+ */
+const getNextIndex = (dir) => {
+  const list = fs.readdirSync(dir, { withFileTypes: true })
+    .filter(dirent => dirent.isFile())
+    .map(({ name }) => {
+      // 1文字以上の連続した数字
+      const index = name.match(/\d+/)
+      // console.log(index)
+      return index ? parseInt(index[0]) : 0
+    })
+  // console.log(list)
+  return Math.max(...list) + 1
 }
