@@ -1,11 +1,6 @@
 <template>
   <div class="flex flex-col h-screen">
     <div class="flex-none py-1">
-      <nuxt-link to="/number-file" class="btn btn-outline">
-        Number File
-      </nuxt-link>
-    </div>
-    <div class="flex-none py-1">
       <button class="btn btn-regular" @click="selectInputFolder">
         仕分けフォルダを設定
       </button>
