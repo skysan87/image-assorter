@@ -13,7 +13,7 @@
           <span class="text-xl font-bold mr-2">→</span>{{ outputFolder }}
         </div>
 
-        <div class="mt-1 relative">
+        <div class="mt-1 relative img-box">
           <div v-if="hasPreview" class="absolute inset-y-0 left-0 top-1/2 cursor-pointer" @click="showNext(-1)">
             <span class="arrow-text">←</span>
           </div>
@@ -239,10 +239,16 @@ export default {
 </script>
 
 <style scoped>
+.img-box {
+  height: 75vh;
+  display: flex;
+  justify-content: center;
+}
+
 .img-view {
   width: auto;
   max-height: 75vh;
-  margin: 0 auto;
+  margin: auto;
 }
 
 .number-box {
