@@ -17,5 +17,10 @@ export default defineNuxtConfig({
     plugins: [
       tailwindcss(),
     ]
+  },
+  nitro: {
+    output: {
+      publicDir: '../app/dist'
+    }
   }
 })
