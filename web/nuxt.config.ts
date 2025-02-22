@@ -1,6 +1,9 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import tailwindcss from '@tailwindcss/vite'
 
+console.log('NODE_ENV:', process.env.NODE_ENV)
+const isPrd = process.env.NODE_ENV === 'production'
+
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   devtools: { enabled: false },
@@ -17,6 +20,9 @@ export default defineNuxtConfig({
     plugins: [
       tailwindcss(),
     ]
+  },
+  app: {
+    baseURL: isPrd ? '.' : '/',
   },
   nitro: {
     output: {
