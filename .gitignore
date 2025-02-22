@@ -91,3 +91,17 @@ sw.*
 
 # electron-app
 build/
+
+# Nuxt dev/build outputs
+.output
+.data
+.nitro
+
+# Misc
+.fleet
+
+# Local env files
+.env.*
+!.env.example
+
+.vscode/

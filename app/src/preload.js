@@ -1,9 +1,10 @@
 const { contextBridge, ipcRenderer } = require('electron')
 
 // rendererプロセスで呼ぶIPC通信処理を書く
-// ex) window.electron.メソッド名(引数)
+// ex) window.ClientApp.メソッド名(引数)
 contextBridge.exposeInMainWorld(
-  'electron', {
+  'ClientApp',
+  {
     openFileDialog: async (properties) => await ipcRenderer.invoke('ipc-open-file-dialog', properties),
 
     isAssorted: async () => await ipcRenderer.invoke('ipc-is-assorted'),
