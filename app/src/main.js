@@ -135,7 +135,7 @@ ipcMain.handle('ipc-set-config', (ev, args) => {
         const ext = path.extname(file).toLowerCase()
         if (media.includes(ext)) {
           outputList.push({
-            input: path.join(inputFolder ,file),
+            input: path.join(inputFolder, file),
             output: ''
           })
         }
@@ -185,9 +185,9 @@ ipcMain.handle('ipc-move-images', async (ev) => {
           const outDir = path.dirname(dist)
 
           if (error) {
-            resultList.push({result: 'NG', detail: error.message, in: filename, out: outDir})
+            resultList.push({ result: 'NG', detail: error.message, in: filename, out: outDir })
           } else {
-            resultList.push({result: 'OK', in: filename, out: outDir})
+            resultList.push({ result: 'OK', in: filename, out: outDir })
           }
           resolve()
         })
@@ -237,7 +237,7 @@ ipcMain.handle('ipc-number-file', async (_, { file, dir }) => {
  * @param {Number} offset 表示しているファイルIndexからの差
  * @returns {Object} {input, output, hasNext, hasPrev}
  */
-const getFileInfo = (currentIndex, offset=0) => {
+const getFileInfo = (currentIndex, offset = 0) => {
   if (outputList.length == 0) {
     return null
   }
@@ -246,7 +246,7 @@ const getFileInfo = (currentIndex, offset=0) => {
   const actualOffset = offset % totalSize
 
   let nextIndex
-  if (actualOffset >= 0 ) {
+  if (actualOffset >= 0) {
     nextIndex = (currentIndex + actualOffset) % totalSize
   } else if (actualOffset < 0) {
     nextIndex = (currentIndex + (totalSize + actualOffset)) % totalSize
