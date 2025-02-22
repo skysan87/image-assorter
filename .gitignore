@@ -103,3 +103,5 @@ build/
 # Local env files
 .env.*
 !.env.example
+
+.vscode/
