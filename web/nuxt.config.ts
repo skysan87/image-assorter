@@ -7,7 +7,12 @@ export default defineNuxtConfig({
   srcDir: 'src',
   ssr: false,
   css: ['~/assets/css/main.css'],
-
+  runtimeConfig: {
+    public: {
+      image: ['.png', '.jpg', '.jpeg', '.gif', '.webp'],
+      movie: ['.mp4']
+    }
+  },
   vite: {
     plugins: [
       tailwindcss(),
