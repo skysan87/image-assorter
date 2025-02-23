@@ -21,7 +21,14 @@ export default defineNuxtConfig({
       tailwindcss(),
     ]
   },
+  router: {
+    options: {
+      // NOTE: 有効にしないとelectronでpage not foundエラー
+      hashMode: isPrd
+    }
+  },
   app: {
+    // NOTE: electronでは相対パスを利用
     baseURL: isPrd ? '.' : '/',
   },
   nitro: {
