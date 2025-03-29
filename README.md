@@ -1,23 +1,31 @@
+
+### Commands
+
+```bash
+# For Desktop development
+npm run tauri:dev
+```
 ## プロジェクト構成
 
 ```
 .
-├──app
-│   ├── build         ・・・electron-builderの出力フォルダ
-│   ├── dist          ・・・nuxt generateの出力フォルダ
-│   ├── node_modules  ・・・Electronプロジェクトのモジュール
+├── node_modules  ・・・Nuxt.jsプロジェクトのモジュール
+├── src-tauri
+│   ├── src/(Tauri resource)
+│   ├── Cargo.toml
+│   └── tauri.conf.json
+├── src-web
+│   ├── src/(Nuxt3 resource)
 │   ├── package.json
-│   └── src
-│       └── main                  ・・・mainプロセス群
-└── web
-    ├── (Nuxt.jsの規定フォルダ群)
-    ├── node_modules  ・・・Nuxt.jsプロジェクトのモジュール
-    ├── nuxt.config.js
-    ├── package.json
-    └── tsconfig.json
+│   └── tsconfig.json
+├── nuxt.config.ts
+├── package.json
+└── tsconfig.json
 ```
 
 ## 環境
+
+- Rustはローカルにインストールが必要
 
 ```bash
 $ node -v
@@ -28,35 +36,23 @@ $ npm -v
 
 $ devbox version
 0.14.0
+
+$ cargo version
+cargo 1.85.0 (d73d2caf9 2024-12-31)
+
+$ rustc --version
+rustc 1.85.0 (4d91de4e4 2025-02-17)
 ```
 
 ## インストール
 
 ```bash
-# appフォルダ
-$ cd app
-$ npm install
-
-# webフォルダ
-$ cd web
 $ npm install
 ```
 
-
-## ビルド
+## デバッグ実行
 
 ```bash
-# Nuxt.jsプロジェクト開発時(webフォルダ)
-$ npm run dev
-# ↑(ローカルサーバ) + electron開発時(appフォルダ)
-$ npm run dev
-
-# nuxt generate(webフォルダ)
-$ npm run build-as-app
-# electron実行(appフォルダ)
-$ npm run start
-
-# electron 実行ファイル作成(appフォルダ)
-# Mac
-$ npm run build:mac
+# For Desktop development
+npm run tauri:dev
 ```
