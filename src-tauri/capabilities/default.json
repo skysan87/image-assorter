@@ -9,8 +9,12 @@
     "core:default",
     "opener:default",
     "dialog:default",
+    "fs:allow-read-dir",
+    "fs:allow-exists",
+    "fs:allow-rename",
+    "fs:allow-remove",
     {
-      "identifier": "fs:default",
+      "identifier": "fs:scope",
       "allow": [
         {
           "path": "$HOME/**"
