@@ -1,8 +1,8 @@
 import { MEDIA_TYPE } from '~/const/const'
+import { convertFileSrc } from '@tauri-apps/api/core'
 
 /**
  * ファイル仕分け
- * TODO: electronと連動しない場合はmock
  */
 export const useAssort = () => {
   const config = useRuntimeConfig()
@@ -12,6 +12,7 @@ export const useAssort = () => {
   const hasPreview = ref(false)
   const hasNext = ref(false)
   const mediaType = ref<number | null>(null)
+  const src = ref<string>('')
   const _folderList = ref<string[]>([])
 
   const IMAGE_EXT = config.public.image as string[]
@@ -39,6 +40,8 @@ export const useAssort = () => {
     hasNext.value = data.hasNext
     hasPreview.value = data.hasPrev
     mediaType.value = checkMediaType(data.input)
+    // @see https://v2.tauri.app/ja/reference/javascript/api/namespacecore/#convertfilesrc
+    src.value = convertFileSrc(data.input)
   }
 
   return {
@@ -54,71 +57,15 @@ export const useAssort = () => {
 
     mediaType: readonly(mediaType),
 
-    filePath: computed(() => 'file:///' + imagePath.value),
+    filePath: readonly(src),
 
-    init: async (folderList: string[], info: AssortState) => {
-      _folderList.value = [...folderList]
+    init: (info: AssortState) => {
       setFileInfo(info)
     },
 
     isNumber: (val: string) => {
-      var pattern = /^([1-9]\d*|0)$/
+      const pattern = /^([1-9]\d*|0)$/
       return pattern.test(val)
-    },
-
-    cancelOutput: async () => {
-      const result = await window.ClientApp.cancelOutput({ current: imagePath.value })
-      if (result) {
-        outputFolder.value = ''
-      }
-    },
-
-    showNext: async (offset: number) => {
-      const nextPath = await window.ClientApp.goToNextImage({
-        offset,
-        current: imagePath.value
-      })
-      if (nextPath !== null) {
-        setFileInfo(nextPath)
-      }
-    },
-
-    assort: async (key: string | number) => {
-
-      const index = typeof key === 'number' ? key : parseInt(key)
-
-      if (index <= 0 || _folderList.value.length < index) {
-        return
-      }
-
-      const nextPath = await window.ClientApp.assortImage({
-        outputIndex: index - 1,
-        path: imagePath.value
-      })
-
-      if (!hasNext.value) {
-        outputFolder.value = _folderList.value[index - 1]
-        return
-      }
-
-      if (nextPath !== null) {
-        setFileInfo(nextPath)
-      }
-    },
-
-    trashImage: async () => {
-      const nextPath = await window.ClientApp.trashImage({
-        path: imagePath.value
-      })
-
-      if (!hasNext.value) {
-        outputFolder.value = '[Trash]'
-        return
-      }
-
-      if (nextPath !== null) {
-        setFileInfo(nextPath)
-      }
     }
   }
 }

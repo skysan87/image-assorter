@@ -5,18 +5,48 @@ import { MEDIA_TYPE } from '~/const/const'
 
 const { dialog, open: _open, cancel: _cancel, submit } = useDialog()
 const {
-  folderList, imagePath, outputFolder, hasPreview, hasNext, mediaType, filePath,
-  init, cancelOutput, showNext, trashImage, assort, isNumber
+  imagePath, outputFolder, hasPreview, hasNext, mediaType, filePath,
+  init, isNumber
 } = useAssort()
+const {
+  cancelOutput, goToNextImage, trashImage, assortImage
+} = useFile()
 
 const moviePlayable = ref(false)
 
+const folderList = ref<string[]>([])
+
 const cancel = async () => {
-  await cancelOutput()
+  cancelOutput(imagePath.value)
   _cancel()
 }
 
-const moveFile = async (ev: KeyboardEvent) => {
+const assort = (key: string | number) => {
+  const index = typeof key === 'number' ? key : parseInt(key)
+  if (index <= 0 || folderList.value.length < index) {
+    return
+  }
+  const nextPath = assortImage(imagePath.value, folderList.value[index - 1])
+  if (!hasNext.value) {
+    alert('最後のファイルです')
+    return
+  }
+  init(nextPath)
+}
+
+const showPreview = () => {
+  init(goToNextImage(imagePath.value, -1))
+}
+
+const showNext = () => {
+  init(goToNextImage(imagePath.value, 1))
+}
+
+const trash = () => {
+  init(trashImage(imagePath.value))
+}
+
+const moveFile = (ev: KeyboardEvent) => {
   if (ev.key === 'Escape') {
     // escape連打でdaialogで閉じるのを抑制
     ev.preventDefault()
@@ -24,13 +54,13 @@ const moveFile = async (ev: KeyboardEvent) => {
   }
 
   if (ev.key === 'ArrowLeft') {
-    await showNext(-1)
+    showPreview()
   } else if (ev.key === 'ArrowRight') {
-    await showNext(1)
+    showNext()
   } else if (ev.key === 'd') {
-    await trashImage()
+    trash()
   } else if (isNumber(ev.key)) {
-    await assort(ev.key)
+    assort(ev.key)
   } else {
     return
   }
@@ -39,7 +69,9 @@ const moveFile = async (ev: KeyboardEvent) => {
 defineExpose({
   open: (_folderList: string[] = [], info: AssortState): Promise<boolean> => {
     return _open(() => {
-      init(_folderList, info)
+      folderList.value = [..._folderList]
+      init(info)
+
       document.addEventListener('keydown', moveFile, false)
     }, (isCancel) => {
       document.removeEventListener('keydown', moveFile, false)
@@ -61,15 +93,15 @@ defineExpose({
       </div>
 
       <div class="relative img-box">
-        <div v-if="hasPreview" class="absolute inset-y-0 left-0 top-1/2 cursor-pointer" @click="showNext(-1)">
+        <div v-if="hasPreview" class="absolute inset-y-0 left-0 top-1/2 cursor-pointer" @click="showPreview">
           <span class="arrow-text text-2xl">←</span>
         </div>
 
-        <img v-if="mediaType === MEDIA_TYPE.IMAGE" :src="filePath" alt="text" class="img-view">
+        <img v-if="mediaType === MEDIA_TYPE.IMAGE" :src="filePath" alt="img" class="img-view">
         <video v-if="mediaType === MEDIA_TYPE.MOVIE" class="img-view" :src="filePath" :controls="moviePlayable" muted
           controlslist="nofullscreen" disablePictureInPicture disableRemotePlayback />
 
-        <div v-if="hasNext" class="absolute inset-y-0 right-0 top-1/2 cursor-pointer" @click="showNext(1)">
+        <div v-if="hasNext" class="absolute inset-y-0 right-0 top-1/2 cursor-pointer" @click="showNext">
           <span class="arrow-text text-2xl">→</span>
         </div>
       </div>
@@ -85,8 +117,7 @@ defineExpose({
         <div class="flex flex-row w-full">
           <div class="flex-1 flex items-center">
             <span class="mr-1">番号で出力先を選択:</span>
-            <button class="block py-1 px-2 text-sm mr-1 bg-red-500 text-white" title="ゴミ箱" tabindex="-1"
-              @click="trashImage">
+            <button class="block py-1 px-2 text-sm mr-1 bg-red-500 text-white" title="ゴミ箱" tabindex="-1" @click="trash">
               D
             </button>
             <button v-for="(path, index) in folderList" :key="index" :title="path"

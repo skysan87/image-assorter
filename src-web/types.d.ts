@@ -5,10 +5,19 @@ interface ConfigParams {
 }
 
 interface AssortState {
+  /** 表示するファイルパス */
   input: string
+  /** 出力先フォルダ */
   output: string
   hasNext: boolean
   hasPrev: boolean
+}
+
+interface OutputInfo {
+  /** ファイルパス */
+  input: string,
+  /** 出力先フォルダ */
+  output: string
 }
 
 /**

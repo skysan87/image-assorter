@@ -1,41 +1,41 @@
 <script setup lang="ts">
-import AssortDialog from '~/components/AssortDialog.vue';
-import { useConfig } from '~/composables/useConfig';
-import { useFile } from '~/composables/useFile';
+import AssortDialog from '@/components/AssortDialog.vue';
+import { useConfig } from '@/composables/useConfig';
+import { useFile } from '@/composables/useFile';
 
 const { inputFolder, outputFolders, saveConfig, fetchConfig, validate } = useConfig()
-const { initSetting, isAssorted, moveImages, openFileDialog } = useFile()
+const { initSetting, isAssorted, moveImages, openFolderDialog, openMultipleFolderDialog } = useFile()
 
 const dialog = ref<InstanceType<typeof AssortDialog>>()
 
 const selectInputFolder = async () => {
-  const result = await openFileDialog()
-  if (result.canceld || result.filePaths.length === 0) {
+  const result = await openFolderDialog()
+  if (!result) {
     return
   }
 
-  if (outputFolders.value.includes(result.filePaths[0])) {
+  if (outputFolders.value.includes(result)) {
     alert('出力先と重複してます!')
     return
   }
 
-  inputFolder.value = result.filePaths[0]
+  inputFolder.value = result
 
   saveConfig()
 }
 
 const selectOutputFolder = async () => {
-  const result = await openFileDialog(['multiSelections'])
-  if (result.canceled || result.filePaths.length === 0) {
+  const result = await openMultipleFolderDialog()
+  if (!result || result.length === 0) {
     return
   }
 
-  if ((outputFolders.value.length + result.filePaths.length) >= 9) {
-    alert('これ以上登録できません!')
+  if ((outputFolders.value.length + result.length) >= 9) {
+    alert('これ以上登録できません。')
     return
   }
 
-  for (const filepath of result.filePaths) {
+  for (const filepath of result) {
     if (outputFolders.value.includes(filepath)) {
       continue
     }
@@ -58,21 +58,19 @@ const assort = async () => {
     return
   }
 
-  if (await isAssorted()) {
+  if (isAssorted()) {
     if (!confirm('仕分け先指定を再度設定しますか？')) {
       return
     }
   }
-
-  const result = await initSetting(
-    inputFolder.value,
-    outputFolders.value
-  )
-
-  if (result.status) {
-    await dialog.value!.open(outputFolders.value, result.data)
-  } else {
-    alert(result.data)
+  try {
+    const assortState = await initSetting(
+      inputFolder.value,
+      outputFolders.value
+    )
+    await dialog.value!.open(outputFolders.value, assortState)
+  } catch (error: any) {
+    alert(error.message)
   }
 }
 
@@ -80,12 +78,13 @@ const move = async () => {
   if (!validate()) {
     return
   }
-  const result = await moveImages()
 
-  // TODO: NG結果の処理
-  console.table(result)
-
-  alert('done')
+  try {
+    await moveImages()
+    alert('done')
+  } catch (error: any) {
+    alert(error.message)
+  }
 }
 
 onMounted(() => {
