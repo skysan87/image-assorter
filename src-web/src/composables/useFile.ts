@@ -1,6 +1,6 @@
 import { open } from '@tauri-apps/plugin-dialog'
-import { readDir, exists, rename, remove } from '@tauri-apps/plugin-fs'
-import { join, basename } from '@tauri-apps/api/path';
+import { readDir, exists, rename, remove, type DirEntry } from '@tauri-apps/plugin-fs'
+import { join, basename, resolve } from '@tauri-apps/api/path';
 import { outputList } from '@/util/store'
 
 /**
@@ -11,16 +11,30 @@ export const useFile = () => {
 
   const config = useRuntimeConfig()
 
+  function tauriWapper(api: () => Promise<any>) {
+    return api()
+      .then(result => result)
+      .catch(error => { new Error(error) })
+  }
+
   function getExtension(filename: string): string {
     return filename.substring(filename.lastIndexOf('.')).toLowerCase()
   }
 
   async function checkExists(folders: string[]): Promise<void> {
-    folders.forEach(async folder => {
-      if (!await exists(folder)) {
-        throw new Error(`${folder}は存在しません。`)
+    const results = await Promise.all(folders.map(folder => exists(folder)))
+      .then(result => result)
+      .catch(error => { throw new Error(error) })
+
+    const message: string[] = []
+    results.forEach((result, i) => {
+      if (!result) {
+        message.push(folders[i])
       }
     })
+    if (message.length > 0) {
+      throw new Error(`${message.join(',')}は存在しません。`)
+    }
   }
 
   /**
@@ -58,20 +72,24 @@ export const useFile = () => {
   }
 
   return {
-    openFolderDialog: async (): Promise<string | null> => {
+    openFolderDialog: (): Promise<string | null> => {
       // キャンセル時はnull
-      return await open({
-        multiple: false,
-        directory: true
-      })
+      return tauriWapper(() => open(
+        {
+          multiple: false,
+          directory: true
+        }
+      ))
     },
 
-    openMultipleFolderDialog: async (): Promise<string[] | null> => {
+    openMultipleFolderDialog: (): Promise<string[] | null> => {
       // キャンセル時はnull
-      return await open({
-        multiple: true,
-        directory: true
-      })
+      return tauriWapper(() => open(
+        {
+          multiple: true,
+          directory: true
+        }
+      ))
     },
 
     /**
@@ -88,7 +106,7 @@ export const useFile = () => {
 
       await checkExists([inputFolder, ...outputFolders])
 
-      const entries = await readDir(inputFolder)
+      const entries: DirEntry[] = await tauriWapper(() => readDir(inputFolder))
       const result = await Promise.all(entries
         .filter(entry => {
           if (entry.isSymlink || entry.isDirectory) {
@@ -116,7 +134,7 @@ export const useFile = () => {
     /**
      * 仕分け実行
      */
-    moveImages: async (): Promise<void> => {
+    moveImages: async (): Promise<boolean> => {
       const promisslist: Array<Promise<any>> = []
       outputList.forEach(async v => {
         if (v.output === '') {
@@ -130,7 +148,9 @@ export const useFile = () => {
           promisslist.push(rename(src, dist))
         }
       })
-      await Promise.all(promisslist)
+      return Promise.all(promisslist)
+        .then(() => true)
+        .catch(error => { throw new Error(error) })
     },
 
     /**
