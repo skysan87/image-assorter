@@ -149,7 +149,10 @@ export const useFile = () => {
         }
       })
       return Promise.all(promisslist)
-        .then(() => true)
+        .then(() => {
+          outputList.length = 0
+          return true
+        })
         .catch(error => { throw new Error(error) })
     },
 
