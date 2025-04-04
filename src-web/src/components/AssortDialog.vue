@@ -2,6 +2,7 @@
 import { useAssort } from '~/composables/useAssort'
 import { useDialog } from '~/composables/useDialog'
 import { MEDIA_TYPE } from '~/const/const'
+import { message } from '@tauri-apps/plugin-dialog'
 
 const { dialog, open: _open, cancel: _cancel, submit } = useDialog()
 const {
@@ -21,14 +22,14 @@ const cancel = async () => {
   _cancel()
 }
 
-const assort = (key: string | number) => {
+const assort = async (key: string | number) => {
   const index = typeof key === 'number' ? key : parseInt(key)
   if (index <= 0 || folderList.value.length < index) {
     return
   }
   const nextPath = assortImage(imagePath.value, folderList.value[index - 1])
   if (!hasNext.value) {
-    alert('最後のファイルです')
+    await message('最後のファイルです')
     return
   }
   init(nextPath)

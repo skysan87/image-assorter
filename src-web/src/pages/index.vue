@@ -2,6 +2,7 @@
 import AssortDialog from '@/components/AssortDialog.vue';
 import { useConfig } from '@/composables/useConfig';
 import { useFile } from '@/composables/useFile';
+import { confirm, message } from '@tauri-apps/plugin-dialog';
 
 const { inputFolder, outputFolders, saveConfig, fetchConfig, validate } = useConfig()
 const { initSetting, isAssorted, moveImages, openFolderDialog, openMultipleFolderDialog } = useFile()
@@ -15,7 +16,7 @@ const selectInputFolder = async () => {
   }
 
   if (outputFolders.value.includes(result)) {
-    alert('出力先と重複してます!')
+    await message('出力先と重複してます!')
     return
   }
 
@@ -31,7 +32,7 @@ const selectOutputFolder = async () => {
   }
 
   if ((outputFolders.value.length + result.length) >= 9) {
-    alert('これ以上登録できません。')
+    await message('これ以上登録できません。')
     return
   }
 
@@ -59,7 +60,7 @@ const assort = async () => {
   }
 
   if (isAssorted()) {
-    if (!confirm('仕分け先指定を再度設定しますか？')) {
+    if (!await confirm('仕分け先指定を再度設定しますか？')) {
       return
     }
   }
@@ -70,7 +71,7 @@ const assort = async () => {
     )
     await dialog.value!.open(outputFolders.value, assortState)
   } catch (error: any) {
-    alert(error.message)
+    await message(error.message)
   }
 }
 
@@ -81,9 +82,9 @@ const move = async () => {
 
   try {
     await moveImages()
-    alert('done')
+    await message('done')
   } catch (error: any) {
-    alert(error.message)
+    await message(error.message)
   }
 }
 
