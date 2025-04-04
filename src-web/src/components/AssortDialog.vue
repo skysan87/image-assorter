@@ -2,7 +2,6 @@
 import { useAssort } from '~/composables/useAssort'
 import { useDialog } from '~/composables/useDialog'
 import { MEDIA_TYPE } from '~/const/const'
-import { message } from '@tauri-apps/plugin-dialog'
 
 const { dialog, open: _open, cancel: _cancel, submit } = useDialog()
 const {
@@ -17,6 +16,8 @@ const moviePlayable = ref(false)
 
 const folderList = ref<string[]>([])
 
+const closeBtn = ref<HTMLButtonElement>()
+
 const cancel = async () => {
   cancelOutput(imagePath.value)
   _cancel()
@@ -27,12 +28,23 @@ const assort = async (key: string | number) => {
   if (index <= 0 || folderList.value.length < index) {
     return
   }
-  const nextPath = assortImage(imagePath.value, folderList.value[index - 1])
+  const outputFolder: string = folderList.value[index - 1]
+  const nextPath = assortImage(imagePath.value, outputFolder)
   if (!hasNext.value) {
-    await message('最後のファイルです')
+    // 最後の状態を表示
+    init({
+      hasNext: hasNext.value,
+      hasPrev: hasPreview.value,
+      input: imagePath.value,
+      output: outputFolder
+    } as AssortState)
+
+    // closeにフォーカス
+    closeBtn.value?.focus()
     return
+  } else {
+    init(nextPath)
   }
-  init(nextPath)
 }
 
 const showPreview = () => {
@@ -111,7 +123,7 @@ defineExpose({
         <div class="w-full text-center">
           <label>
             <input v-model="moviePlayable" type="checkbox">
-            <span>動画を再生する</span>
+            <span class="ml-1 select-none">動画を再生する</span>
           </label>
         </div>
 
@@ -126,7 +138,7 @@ defineExpose({
               {{ index + 1 }}
             </button>
           </div>
-          <button ref="cancelBtn" class="flex-none btn btn-outline__red mr-2" @click="cancel">
+          <button class="flex-none btn btn-outline__red mr-2" @click="cancel">
             Cancel
           </button>
           <button ref="closeBtn" class="flex-none btn btn-outline" @click="submit">
