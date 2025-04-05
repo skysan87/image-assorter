@@ -56,3 +56,26 @@ $ npm install
 # For Desktop development
 npm run tauri:dev
 ```
+
+## ビルド
+
+> [!NOTE}
+> appのみ生成する。
+> `tauri.conf.json`で設定を行う。
+
+```bash
+npm run tauri build
+```
+
+## Reference
+
+- Nuxt3の導入方法
+  - https://v2.tauri.app/ja/start/frontend/nuxt/
+- ファイルを開く(dialog)
+  - https://v2.tauri.app/ja/plugin/dialog/#open-a-file-selector-dialog
+- ファイルを読み込む(fs)
+  - https://v2.tauri.app/ja/plugin/file-system/
+  - https://v2.tauri.app/ja/reference/javascript/api/namespacecore/#convertfilesrc
+    - ローカルの画像ファイルの参照
+- 権限
+  - https://github.com/tauri-apps/plugins-workspace/issues/1989
