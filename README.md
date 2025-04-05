@@ -59,7 +59,7 @@ npm run tauri:dev
 
 ## ビルド
 
-> [!NOTE}
+> [!NOTE]
 > appのみ生成する。
 > `tauri.conf.json`で設定を行う。
 
