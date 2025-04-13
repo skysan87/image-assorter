@@ -117,12 +117,12 @@ onMounted(() => {
       </div>
     </div>
     <div class="flex-none">
-      <button class="btn bg-green-500 w-full" @click="assort">
+      <button class="btn bg-green-500 w-full active:bg-green-600" @click="assort">
         仕分け先指定
       </button>
     </div>
     <div class="flex-none">
-      <button class="btn bg-red-500 text-white w-full" @click="move">
+      <button class="btn bg-red-500 text-white w-full active:bg-red-600" @click="move">
         仕分け実行
       </button>
     </div>
