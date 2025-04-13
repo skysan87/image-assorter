@@ -6,9 +6,8 @@ dialog::backdrop {
 
 /* 表示サイズの指定 */
 dialog[open]:modal {
-  height: -webkit-fill-available; /* Safari */
+  height: -webkit-fill-available;
   max-height: 98vh;
-  max-width: 85vw;
   overflow-x: hidden;
   overflow-y: auto;
 

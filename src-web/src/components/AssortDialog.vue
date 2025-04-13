@@ -120,7 +120,7 @@ defineExpose({
         </div>
       </div>
 
-      <div class="relative img-box">
+      <div class="content flex-1 relative">
         <div v-if="hasPreview" class="absolute inset-y-0 left-0 top-1/2 cursor-pointer" @click="showPreview">
           <span class="arrow-text text-2xl">←</span>
         </div>
@@ -167,14 +167,23 @@ defineExpose({
 </template>
 
 <style scoped>
-.img-box {
-  max-height: 75vh;
+.header {
+  height: 52px;
+}
+
+.content {
+  height: calc(100% - 52px - 54px) !important;
+}
+
+.footer {
+  height: 54px;
 }
 
 .img-view {
   width: auto;
-  max-height: 75vh;
   margin: auto;
+  object-fit: contain;
+  height: 100%;
 }
 
 .arrow-text {
