@@ -1,14 +1,13 @@
 import { open } from '@tauri-apps/plugin-dialog'
 import { readDir, exists, rename, remove, type DirEntry } from '@tauri-apps/plugin-fs'
-import { join, basename, resolve } from '@tauri-apps/api/path';
+import { join, basename } from '@tauri-apps/api/path';
 import { outputList } from '@/util/store'
+import { DELETE_INDEX } from '@/const/const'
 
 /**
  * ファイル操作
  */
 export const useFile = () => {
-  const DELETE_INDEX = '[Trash]'
-
   const config = useRuntimeConfig()
 
   function tauriWapper(api: () => Promise<any>) {

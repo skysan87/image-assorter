@@ -3,3 +3,8 @@ export const MEDIA_TYPE = {
   MOVIE: 1,
   NONE: -1
 }
+
+/**
+ * 削除を表すラベル
+ */
+export const DELETE_INDEX = '[Trash]'
