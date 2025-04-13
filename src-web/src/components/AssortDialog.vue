@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useAssort } from '~/composables/useAssort'
 import { useDialog } from '~/composables/useDialog'
-import { MEDIA_TYPE } from '~/const/const'
+import { MEDIA_TYPE, DELETE_INDEX } from '~/const/const'
 
 const { dialog, open: _open, cancel: _cancel, submit } = useDialog()
 const {
@@ -56,7 +56,22 @@ const showNext = () => {
 }
 
 const trash = () => {
-  init(trashImage(imagePath.value))
+  const nextPath = trashImage(imagePath.value)
+  if (!hasNext.value) {
+    // 最後の状態を表示
+    init({
+      hasNext: hasNext.value,
+      hasPrev: hasPreview.value,
+      input: imagePath.value,
+      output: DELETE_INDEX
+    } as AssortState)
+
+    // closeにフォーカス
+    closeBtn.value?.focus()
+    return
+  } else {
+    init(nextPath)
+  }
 }
 
 const moveFile = (ev: KeyboardEvent) => {
